@@ -11,6 +11,7 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
+        - "traefik.http.middlewares.test-compress.compress=true"
         - "traefik.http.routers.dashboard.rule=Host(`console.falcon.local`)"
         - "traefik.http.routers.dashboard.service=api@internal"
         - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
@@ -31,6 +32,8 @@ services:
     networks:
       - public
     deploy:
+      mode: replicated
+      replicas: 2
       labels:
         - "traefik.enable=true"
         - "traefik.http.services.whoami.loadbalancer.server.port=80"

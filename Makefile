@@ -8,8 +8,8 @@ volume:
 	docker volume create portainer_data
 
 stack:
-	docker stack deploy -c traefik-stack.yml traefik
 	docker stack deploy -c portainer-stack.yml portainer
+	docker stack deploy -c traefik-stack.yml traefik
 	docker stack deploy -c app-stack.yml app
 
 
