@@ -39,6 +39,7 @@ services:
 configs:
   static:
     file: ./traefik/static.yml
+    name: static_v2
 
 networks:
   public:
