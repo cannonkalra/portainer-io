@@ -1,3 +1,5 @@
+ping: {}
+
 entryPoints:
   http:
     address: ":80"
