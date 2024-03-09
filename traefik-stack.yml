@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  traefik:
+    image: traefik:v3.0
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    networks:
+      - traefik-public
+
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    configs:
+      - source: static
+        target: /etc/traefik/traefik.yml
+      # - source: dynamic
+      #   target: /etc/traefik/dynamic/config.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  whoami:
+    image: traefik/whoami
+    networks:
+      - traefik-public
+    ports:
+      - 8083:80
+
+configs:
+  static:
+    file: ./traefik/static.yml
+  # dynamic:
+  #   file: ./traefik/dynamic/config.yml
+
+networks:
+  traefik-public:
+    driver: overlay
+    attachable: true
