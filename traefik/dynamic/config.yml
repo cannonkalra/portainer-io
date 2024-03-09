@@ -2,11 +2,11 @@ http:
   routers:
     docker-localhost:
       rule: Host(`docker.localhost`)
-      service: whoami-play-lb@docker
+      service: whoami-play-lb@swarm
 
     blue-docker-localhost:
       rule: Host(`blue.docker.localhost`)
-      service: web-1-play-lb@docker
+      service: web-1-play-lb@swarm
 
     green-docker-localhost:
       rule: Host(`green.docker.localhost`)
@@ -14,7 +14,7 @@ http:
 
     whoami-docker-localhost:
       rule: Host(`whoami.docker.localhost`)
-      service: whoami-play-lb@docker
+      service: traefik_whoami@swarm
 
   services:
     whoami:

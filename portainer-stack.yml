@@ -7,33 +7,41 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     networks:
-      - traefik-public
+      - agent_network
     deploy:
       mode: global
       placement:
-        constraints: [node.platform.os == linux]
+        constraints:
+          - node.platform.os == linux
 
   portainer:
     image: portainer/portainer-ce:2.19.4
-    command: -H tcp://tasks.agent:9001 --tlsskipverify
-    ports:
-      - "9443:9443"
-      - "9000:9000"
-      - "8000:8000"
+    # command: -H tcp://tasks.agent:9001 --tlsskipverify
     volumes:
       - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - traefik-public
+      - public
+      - agent_network
     deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.portainer.rule=Host(`portainer.falcon.local`)"
+        - "traefik.http.routers.portainer.service=portainer"
+        - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+        - "traefik.docker.network=public"
       mode: replicated
       replicas: 1
       placement:
-        constraints: [node.role == manager]
-
-networks:
-  traefik-public:
-    driver: overlay
-    attachable: true
+        constraints:
+          - node.role == manager
 
 volumes:
   portainer_data:
+    external: true
+
+networks:
+  public:
+    external: true
+  agent_network:
+    external: true
