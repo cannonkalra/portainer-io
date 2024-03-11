@@ -7,6 +7,7 @@ services:
       - public
     volumes:
       - prometheus_data:/etc/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     command:
       - --config.file=/etc/prometheus/prometheus.yml
     configs:
@@ -61,18 +62,28 @@ services:
         reservations:
           memory: 64M
     volumes:
-      - type: bind
-        source: /
-        target: /rootfs
-        read_only: true
-      - type: bind
-        source: /proc
-        target: /host/proc
-        read_only: true
-      - type: bind
-        source: /sys
-        target: /host/sys
-        read_only: true
+      - /:/rootfs:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    networks:
+      - public
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    command: -logtostderr -docker_only
+    deploy:
+      mode: global
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
     networks:
       - public
 
