@@ -15,7 +15,7 @@ services:
         - "traefik.http.routers.dashboard.rule=Host(`console.falcon.local`)"
         - "traefik.http.routers.dashboard.service=api@internal"
         - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
-        - "traefik.http.routers.ping.rule=Host(`console.falcon.local`) && (PathPrefix(`/ping`))"
+        - "traefik.http.routers.ping.rule=Path(`/ping`)"
         - "traefik.http.routers.ping.service=ping@internal"
         - "traefik.http.services.ping.loadbalancer.server.port=8080"
 
@@ -27,7 +27,6 @@ services:
     configs:
       - source: static
         target: /etc/traefik/traefik.yml
-
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 

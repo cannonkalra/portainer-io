@@ -6,6 +6,8 @@ network:
 
 volume:
 	docker volume create portainer_data
+	docker volume create grafana_data
+	docker volume create prometheus_data
 
 stack:
 	docker stack deploy -c portainer-stack.yml portainer
