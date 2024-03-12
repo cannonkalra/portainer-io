@@ -1,5 +1,3 @@
-
-
 network:
 	docker network create -d overlay agent_network
 	docker network create -d overlay public
@@ -13,7 +11,6 @@ stack:
 	docker stack deploy -c portainer-stack.yml portainer
 	docker stack deploy -c traefik-stack.yml traefik
 	docker stack deploy -c app-stack.yml app
-
 
 all: network volume stack
 

@@ -1,0 +1,31 @@
+http:
+  routers:
+    docker-localhost:
+      rule: Host(`docker.localhost`)
+      service: whoami-play-lb@swarm
+
+    blue-docker-localhost:
+      rule: Host(`blue.docker.localhost`)
+      service: web-1-play-lb@swarm
+
+    green-docker-localhost:
+      rule: Host(`green.docker.localhost`)
+      service: web-2-play-lb@docker
+
+    whoami-docker-localhost:
+      rule: Host(`whoami.docker.localhost`)
+      service: traefik_whoami@swarm
+
+  services:
+    whoami:
+      loadBalancer:
+        servers:
+          - url: "http://traefik_whoami/"
+    green:
+      loadBalancer:
+        servers:
+          - url: "http://traefik_web-2/"
+    blue:
+      loadBalancer:
+        servers:
+          - url: "http://traefik_web-1/"

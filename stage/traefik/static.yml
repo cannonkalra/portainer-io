@@ -1,0 +1,18 @@
+ping: {}
+
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+
+providers:
+  swarm:
+    endpoint: "unix:///var/run/docker.sock"
+  # file:
+  #   directory: /etc/traefik/dynamic
+  #   watch: true
+
+api:
+  dashboard: true
+  insecure: true
