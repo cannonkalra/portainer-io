@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   prometheus:
-    image: prom/prometheus:v2.50.1
+    image: prom/prometheus:v3.0.1
     networks:
       - public
     volumes:
@@ -22,7 +22,7 @@ services:
           - node.role == manager
 
   grafana:
-    image: grafana/grafana:10.3.4
+    image: grafana/grafana:11.4.0
     networks:
       - public
     volumes:
@@ -40,13 +40,19 @@ services:
     depends_on:
       - prometheus
     deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
+        - "traefik.http.routers.grafana.service=grafana"
+        - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+        - "traefik.docker.network=public"
       replicas: 1
       placement:
         constraints:
           - node.role == manager
 
   node-exporter:
-    image: prom/node-exporter:v1.7.0
+    image: prom/node-exporter:v1.8.2
     ports:
       - "9100:9100"
     command:
@@ -69,8 +75,10 @@ services:
       - public
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    image: gcr.io/cadvisor/cadvisor:v0.49.2
     command: -logtostderr -docker_only
+    ports:
+      - "8080:8080"
     deploy:
       mode: global
       resources:
@@ -103,4 +111,4 @@ configs:
     name: provisioning
   prom:
     file: ./monitoring/prometheus.yml
-    name: prometheusv2
+    name: prometheus
