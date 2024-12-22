@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   prometheus:
     image: prom/prometheus:v3.0.1
@@ -92,6 +90,35 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
       - /dev/disk:/dev/disk:ro
+    networks:
+      - public
+
+  loki:
+    image: grafana/loki:3.2.1
+    ports:
+      - "3100:3100"
+    networks:
+      - public
+
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - loki
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   networks:
+  #     - public
+
+  fluent-bit:
+    image: grafana/fluent-bit-plugin-loki:3.2.1
+    environment:
+      LOKI_URL: http://loki:3100/loki/api/v1/push
+    volumes:
+      - ./monitoring/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
     networks:
       - public
 
