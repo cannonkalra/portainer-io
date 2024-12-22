@@ -29,7 +29,6 @@ services:
         - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
         - "traefik.http.routers.portainer.service=portainer"
         - "traefik.http.services.portainer.loadbalancer.server.port=9000"
-        - "traefik.docker.network=public"
       mode: replicated
       replicas: 1
       placement:
