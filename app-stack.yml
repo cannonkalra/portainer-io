@@ -1,6 +1,6 @@
 services:
   app:
-    image: cannonkalra/demo:green
+    image: cannonkalra/demo:blue
     networks:
       - public
     ports:
