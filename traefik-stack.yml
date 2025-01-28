@@ -1,35 +1,40 @@
 services:
   traefik:
-    image: traefik:v3.2
+    image: traefik:v3.3
     ports:
       - 80:80
       - 443:443
     networks:
       - public
+    command:
+      - "--entryPoints.http.address=:80"
+      - "--entryPoints.https.address=:443"
+      - "--ping=true"
+      - "--log.level=DEBUG"
+      - "--providers.swarm=true"
+      - "--providers.swarm.network=public"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
     deploy:
       labels:
         - "traefik.enable=true"
         - "traefik.http.middlewares.test-compress.compress=true"
-        - "traefik.http.routers.dashboard.rule=Host(`console.localhost`)"
+        - "traefik.http.routers.dashboard.rule=Host(`console.me.dev`)"
         - "traefik.http.routers.dashboard.service=api@internal"
         - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
         - "traefik.http.routers.ping.rule=Path(`/ping`)"
         - "traefik.http.routers.ping.service=ping@internal"
         - "traefik.http.services.ping.loadbalancer.server.port=8080"
-
       mode: replicated
       replicas: 1
       placement:
         constraints:
           - node.role == manager
-    configs:
-      - source: static
-        target: /etc/traefik/traefik.yml
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock
 
   whoami:
-    image: traefik/whoami
+    image: traefik/whoami:v1.10
     networks:
       - public
     deploy:
@@ -37,13 +42,10 @@ services:
       replicas: 1
       labels:
         - "traefik.enable=true"
+        - "traefik.http.routers.whoami.service=whoami"
+        - "traefik.http.routers.whoami.entrypoints=http"
+        - "traefik.http.routers.whoami.rule=Host(`whoami.me.dev`)"
         - "traefik.http.services.whoami.loadbalancer.server.port=80"
-        - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
-
-configs:
-  static:
-    file: ./traefik/static.yml
-    name: static
 
 networks:
   public:
